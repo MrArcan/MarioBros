@@ -15,12 +15,12 @@ let imagenPersonaje
 let imagenPared
 
 function preload() { 
-  fondoJuego = loadImage('./images/fondojuego.png')
-  fondoInicio = loadImage('./images/fondoinicio.png')
-  musicaRecord = loadSound('./sounds/aplauso.wav')
-  musicaJuego = loadSound('./sounds/boombayah.mp3')
-  imagenPersonaje = loadImage('./images/bird.png')
-  imagenPared = loadImage('./images/pared.png')
+  fondoJuego = loadImage('./img/Backgrounds/overworld.jpg')
+  fondoInicio = loadImage('./img/Backgrounds/castle.jpg')
+  // musicaRecord = loadSound('./sounds/aplauso.wav')
+  // musicaJuego = loadSound('./sounds/boombayah.mp3')
+  imagenPersonaje = loadImage('./img/characters/mario.png')
+  imagenPared = loadImage('./img/pared.png')
 }
 
 function setup() {
@@ -35,8 +35,8 @@ function draw() {
   //square(150,150,100)
   if (estado === 1) {
     imageMode(CORNER)
-    image(fondoJuego,x,0)
-    image(fondoJuego,x+fondoJuego.width,0)
+    image(fondoJuego,x,0, fondoJuego.width, 800)
+    image(fondoJuego,x+fondoJuego.width,0, fondoJuego.width, 800)
     x = x - 6
     //Movimiento del personaje
     dY = dY + 1  //dy += 1
@@ -62,7 +62,7 @@ function draw() {
       //Colisiones
       if (posY < 0 || posY > height || (abs(wallX[i]-300) < 50 && abs(posY - wallY[i])  > 100)) {
         estado  = 0
-        musicaJuego.stop()
+        // musicaJuego.stop()
         cursor()
       }
 
@@ -84,13 +84,13 @@ function draw() {
     //imageMode(CENTER)
     imageMode(CORNER)
     background(0)
-    image(fondoInicio,0,0)
+    image(fondoInicio,0,0,600,800)
     text("Record: " + record, 60, 450)
-    if (recordAnterior != record) {
-      if (!musicaRecord.isPlaying()) {
-        musicaRecord.play()
-      }
-    }
+    // if (recordAnterior != record) {
+    //   if (!musicaRecord.isPlaying()) {
+    //     musicaRecord.play()
+    //   }
+    // }
   }
 }
 
@@ -105,9 +105,9 @@ function mousePressed() {
     wallX = [600, 900]
     wallY = [400, 600] 
     noCursor()  
-    if (musicaRecord.isPlaying()) {
-      musicaRecord.stop()
-    }
+    // if (musicaRecord.isPlaying()) {
+    //   musicaRecord.stop()
+    // }
     //musicaJuego.play()
 
   } else {
