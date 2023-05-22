@@ -11,28 +11,37 @@ let recordAnterior = 0
 let puntaje = 0
 let musicaRecord
 let musicaJuego
-let imagenPersonaje
 let imagenPared
+let fall = 0;
+let imageMario, imageLuigi;
+let imageFMario, imageFLuigi;
+let imageTMario, imageTLuigi;
+let myFont
+let charactet = 0
+let buttonM, buttonL;
 
 function preload() { 
   fondoJuego = loadImage('./img/Backgrounds/overworld.jpg')
   fondoInicio = loadImage('./img/Backgrounds/castle.jpg')
-  // musicaRecord = loadSound('./sounds/aplauso.wav')
-  // musicaJuego = loadSound('./sounds/boombayah.mp3')
-  imagenPersonaje = loadImage('./img/characters/mario.png')
   imagenPared = loadImage('./img/pared.png')
+  imageMario = loadImage('./img/characters/mario.png')
+  imageFMario = loadImage('./img/characters/marioFalling.png')
+  imageTMario = loadImage('./img/characters/marioTFalling.png')
+  imageLuigi = loadImage('./img/characters/luigi.png')
+  imageFLuigi = loadImage('./img/characters/luigiFalling.png')
+  imageTLuigi = loadImage('./img/characters/luigiTFalling.png')
+  myFont = loadFont("./fond/SuperMario.ttf");
 }
 
 function setup() {
   // put setup code here
   createCanvas(1200,800)
+  textFont(myFont);
   textSize(34)
 }
 
 function draw() {
   // put drawing code here
-  //background(0)
-  //square(150,150,100)
   if (estado === 1) {
     imageMode(CORNER)
     image(fondoJuego,x,0, fondoJuego.width, 800)
@@ -75,24 +84,55 @@ function draw() {
       x = 0
     }
     //Desplegamos al personaje
-    //text("👻",300,posY)
-    image(imagenPersonaje,300,posY,50,50)
+    // //Animation
+    if(fall < -5){
+      image(imageCharacter,300,posY,50,50)
+      fall++
+    }else if(fall < 0){
+      image(imageTransition,300,posY,50,50)
+      fall++
+    }else{
+      image(imageFalling,300,posY,50,50)
+    }
     //Desplegamos el puntaje
     text("Puntaje: " + puntaje, width/2-50, 50)
 
   } else {  //estado = 0
-    //imageMode(CENTER)
+    
+    imageCharacter = imageMario
+    imageFalling = imageFMario
+    imageTransition = imageTMario
     imageMode(CORNER)
-    background(0)
-    image(fondoInicio,0,0,600,800)
-    text("Record: " + record, 60, 450)
-    // if (recordAnterior != record) {
-    //   if (!musicaRecord.isPlaying()) {
-    //     musicaRecord.play()
-    //   }
-    // }
+    image(fondoInicio,0,0, fondoInicio.width, 800)
+    text("Record: " + record, 100 , 450)
+    text("Selecciona personaje", fondoJuego.width/2-100, 300)
+    // buttonM = createButton("MARIO");
+    // buttonL = createButton("LUIGI");
+    // buttonM.position(575, 720);
+    // buttonL.position(725, 720);
+    // buttonM.mousePressed(changeCharacter(1));
+    // buttonL.mousePressed(changeCharacter(2));
   }
 }
+
+// function changeCharacter(value){
+//   if(value == 1){
+    // imageCharacter = imageMario
+    // imageFalling = imageFMario
+    // imageTransition = imageTMario
+//   }else{
+//     imageCharacter = imageLuigi
+//     imageFalling = imageFLuigi
+//     imageTransition = imageTLuigi
+//   }
+// }
+// function keyPress(){
+//   if(keyCode == BACKSPACE){
+
+//   }else{
+
+//   }
+// }
 
 function mousePressed() {
   if (estado === 0) {
@@ -111,6 +151,7 @@ function mousePressed() {
     //musicaJuego.play()
 
   } else {
+    fall = -15;
     dY = -15
   }
 }
