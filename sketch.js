@@ -14,14 +14,15 @@ let widthNMario = 40,
   widthNLuigi = 40;
 let heightNMario = 85,
   heightNLuigi = 85;
-let im_c = 0;
+let im_c = 2;
+let char = false;
 
 let wallX = [600, 900, 1200, 1500];
 let wallY = [400, 600, 500, 300];
 let myFont;
 
 //Sound
-let coin;
+let coin, marioSound, luigiSound, soundTrack, menuSoundTrack;
 
 //Logic
 
@@ -38,7 +39,7 @@ let buttonM, buttonL;
 function preload() {
   backgroundGame = loadImage("./img/Backgrounds/overworld.jpg");
   backgroundMenu = loadImage("./img/Backgrounds/castle.jpg");
-  imageWall = loadImage("./img/pared.png");
+  imageWall = loadImage("./img/Pipes/pared.png");
   imageMario = loadImage("./img/characters/mario.png");
   imageFMario = loadImage("./img/characters/marioFalling.png");
   imageTMario = loadImage("./img/characters/marioTFalling.png");
@@ -51,6 +52,10 @@ function preload() {
   happyLuigi = loadImage("./img/characters/happyLuigi.png");
   myFont = loadFont("./fond/SuperMario.ttf");
   coin = loadSound("./sounds/coin.wav");
+  marioSound = loadSound("./sounds/letsAGo.mp3");
+  luigiSound = loadSound("./sounds/LuigiTime.mp3");
+  soundTrack = loadSound("./sounds/mariosong.mp3");
+  menuSoundTrack = loadSound("./sounds/menu.mp3");
 }
 
 function setup() {
@@ -59,11 +64,20 @@ function setup() {
   textFont(myFont);
   textSize(34);
   frameRate(60);
+  menuSoundTrack.setVolume(0.5);
+  soundTrack.setVolume(0.5);
+  coin.setVolume(0.5);
 }
 
 function draw() {
   // put drawing code here
   if (estado === 1) {
+    if (!soundTrack.isPlaying()) {
+      soundTrack.play();
+    }
+    if (menuSoundTrack.isPlaying()) {
+      menuSoundTrack.stop();
+    }
     imageMode(CORNER);
     image(backgroundGame, x, 0, backgroundGame.width, 800);
     image(
@@ -125,12 +139,28 @@ function draw() {
     }
     //Desplegamos el score
     text("score: " + score, width / 2 - 50, 50);
-    // coin.play();
   } else {
     //Estado == 0
+    if (!menuSoundTrack.isPlaying()) {
+      menuSoundTrack.play();
+    }
+    if (soundTrack.isPlaying()) {
+      soundTrack.stop();
+    }
     imageMode(CORNER);
     image(backgroundMenu, 0, 0, backgroundMenu.width, 800);
     text("Record: " + record, 100, 450);
+    //This is the Character assignation
+    if (im_c == 0) {
+      imageCharacter = imageMario;
+      imageFalling = imageFMario;
+      imageTransition = imageTMario;
+    } else if (im_c == 1) {
+      imageCharacter = imageLuigi;
+      imageFalling = imageFLuigi;
+      imageTransition = imageTLuigi;
+    }
+    //This is the Mario button
     if (
       mouseX > 575 &&
       mouseX < 575 + widthNMario &&
@@ -139,23 +169,16 @@ function draw() {
     ) {
       //This is the hover effect
       if (im_c == 0) {
-        image(happyMario, 575, height / 3 + 50, 50, 95);
+        image(happyMario, 575, height / 3 + 50, 60, 105);
       } else {
         image(selectMario, 575, height / 3 + 50, 50, 95);
       }
     } else if (im_c == 0) {
-      imageCharacter = imageMario;
-      imageFalling = imageFMario;
-      imageTransition = imageTMario;
       image(happyMario, 575, height / 3 + 50, 50, 95);
     } else {
-      if (im_c == 0) {
-        image(happyMario, 575, height / 3 + 50, 50, 95);
-      } else {
-        image(selectMario, 575, height / 3 + 50, 40, 85);
-      }
+      image(selectMario, 575, height / 3 + 50, 40, 85);
     }
-
+    //This is the Luigi button
     if (
       mouseX > 725 &&
       mouseX < 725 + widthNLuigi &&
@@ -169,14 +192,15 @@ function draw() {
         image(selectLuigi, 725, height / 3 + 50, 60, 105);
       }
     } else if (im_c == 1) {
-      imageCharacter = imageLuigi;
-      imageFalling = imageFLuigi;
-      imageTransition = imageTLuigi;
-      image(happyLuigi, 725, height / 3 + 50, 60, 105);
+      image(happyLuigi, 725, height / 3 + 50, 50, 95);
     } else {
       image(selectLuigi, 725, height / 3 + 50, 50, 85);
     }
     selCharacter();
+    textSize(36);
+    text("Press Space or UpArrow to start", 325, height / 5);
+    text("Select your character", 475, height / 3 + 190);
+    textSize(34);
     text("Mario", 550, height / 3 + 50);
     text("Luigi", 710, height / 3 + 50);
   }
@@ -191,6 +215,10 @@ function selCharacter() {
   ) {
     // 0 = Mario
     im_c = 0;
+    if (!marioSound.isPlaying()) {
+      marioSound.play();
+    }
+    char = true;
   } else if (
     mouseX > 725 &&
     mouseX < 725 + widthNLuigi &&
@@ -200,11 +228,15 @@ function selCharacter() {
   ) {
     // 1 = Luigi
     im_c = 1;
+    if (!luigiSound.isPlaying()) {
+      luigiSound.play();
+    }
+    char = true;
   }
 }
 
 function keyPressed() {
-  if (keyCode == 32 || keyCode == UP_ARROW) {
+  if ((keyCode == 32 || keyCode == UP_ARROW) && char) {
     if (estado === 0) {
       estado = 1;
       recordAnterior = record;
@@ -212,13 +244,10 @@ function keyPressed() {
       x = 0;
       posY = 50;
       dY = 3;
+      im_c = 2;
       wallX = [600, 900, 1200, 1500];
       wallY = [400, 600, 500, 300];
       noCursor();
-      // if (musicaRecord.isPlaying()) {
-      //   musicaRecord.stop() UWU
-      // }
-      //musicaJuego.play()
     } else {
       fall = -15;
       dY = -15;
